@@ -7,18 +7,10 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import ru.tatuna.mycurrency.databinding.FragmentCurrencyInfoBinding
-import ru.tatuna.mycurrency.databinding.FragmentCurrencyListBinding
-import ru.tatuna.mycurrency.pojo.CurrencyItem
-import ru.tatuna.mycurrency.pojo.HistoryValue
 import ru.tatuna.mycurrency.repositories.CurrencyHistoryRepository
 import ru.tatuna.mycurrency.service.CurrencyService
-import ru.tatuna.mycurrency.ui.CurrencyListFragment.Companion.CURRENCY_NAME
-import ru.tatuna.mycurrency.ui.CurrencyListFragment.Companion.CURRENCY_VALUE
 import ru.tatuna.mycurrency.viewmodels.CurrencyInfoViewModel
 import ru.tatuna.mycurrency.viewmodels.CurrencyInfoViewModelFactory
-import ru.tatuna.mycurrency.viewmodels.CurrencyListViewModel
-import ru.tatuna.mycurrency.viewmodels.CurrencyListViewModelFactory
-import java.time.LocalDate
 import kotlin.properties.Delegates
 
 class CurrencyInfoFragment : Fragment() {
@@ -49,8 +41,8 @@ class CurrencyInfoFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentCurrencyInfoBinding.inflate(inflater, container, false)
-        name = arguments?.getString(CURRENCY_NAME) ?: ""
-        currencyValue = arguments?.getFloat(CURRENCY_VALUE) ?: 0.0F
+//        name = arguments?.getString(CURRENCY_NAME) ?: ""
+//        currencyValue = arguments?.getFloat(CURRENCY_VALUE) ?: 0.0F
         viewModelFactory =
             CurrencyInfoViewModelFactory(CurrencyHistoryRepository(CurrencyService.INSTANCE))
         viewModel = ViewModelProvider(this, viewModelFactory)[CurrencyInfoViewModel::class.java]
