@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelStoreOwner
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -13,10 +14,13 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import ru.tatuna.mycurrency.pojo.CurrencyItem
+import ru.tatuna.mycurrency.repositories.CurrencyHistoryRepository
 import ru.tatuna.mycurrency.repositories.CurrencyListRepository
 import ru.tatuna.mycurrency.service.CurrencyService
 import ru.tatuna.mycurrency.ui.screens.ItemInfoScreen
 import ru.tatuna.mycurrency.ui.screens.ItemListScreen
+import ru.tatuna.mycurrency.viewmodels.CurrencyInfoViewModel
+import ru.tatuna.mycurrency.viewmodels.CurrencyInfoViewModelFactory
 import ru.tatuna.mycurrency.viewmodels.CurrencyListViewModel
 import ru.tatuna.mycurrency.viewmodels.CurrencyListViewModelFactory
 
@@ -35,15 +39,12 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModelFactory =
-            CurrencyListViewModelFactory(CurrencyListRepository(CurrencyService.INSTANCE))
-        viewModel = ViewModelProvider(this, viewModelFactory)[CurrencyListViewModel::class.java]
-        viewModel.loadCurrencyList()
+
         setContent {
             val navController = rememberNavController()
 
             Scaffold {
-                NavigationComponent(navController, viewModel, currencyList)
+                NavigationComponent(navController, this, currencyList)
             }
         }
     }
@@ -52,7 +53,7 @@ class MainActivity : AppCompatActivity() {
 @Composable
 fun NavigationComponent(
     navController: NavHostController,
-    viewModel: CurrencyListViewModel,
+    activity: ViewModelStoreOwner,
     currencyList: List<CurrencyItem>
 ) {
     NavHost(
@@ -60,6 +61,9 @@ fun NavigationComponent(
         startDestination = "item_list"
     ) {
         composable("item_list") {
+            val viewModelFactory =
+                CurrencyListViewModelFactory(CurrencyListRepository(CurrencyService.INSTANCE))
+            val viewModel = ViewModelProvider(activity, viewModelFactory)[CurrencyListViewModel::class.java]
             ItemListScreen(navController, viewModel, currencyList)
         }
         composable(
@@ -70,7 +74,10 @@ fun NavigationComponent(
         ) {
             val name = it.arguments?.getString("item_name") ?: ""
             val value: Float = it.arguments?.getFloat("item_value") ?: 0.0F
-            ItemInfoScreen(name, value)
+            val viewModelFactory =
+                CurrencyInfoViewModelFactory(CurrencyHistoryRepository(CurrencyService.INSTANCE))
+            val viewModel = ViewModelProvider(activity, viewModelFactory)[CurrencyInfoViewModel::class.java]
+            ItemInfoScreen(name, value, viewModel)
         }
     }
 }
