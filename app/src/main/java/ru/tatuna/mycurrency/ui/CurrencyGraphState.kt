@@ -39,7 +39,7 @@ class CurrencyGraphState(private var historyValues: List<HistoryValue> = listOf(
 
     fun getCurrencyDateList() = List(5) { historyValues[2 * it + 1].date }
 
-    fun getTopLineY() = periodSize
+    fun getPeriodSize() = periodSize
 
     fun getBottomLineY() = viewHeight
 }
